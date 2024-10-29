@@ -1,20 +1,20 @@
 package main
 
 import (
-	"image/color"
 	"log"
+
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func (g *Game) Update() error {
-  Keys(g) 
+	g.Keys()
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-  g.s = screen
-  g.p.img.Fill(color.White)
-  g.s.DrawImage(g.p.img, g.p.op)
+	g.s = screen
+  g.MapEditor()  
+  g.UtilScreen()
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -22,10 +22,10 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 }
 
 func main() {
-  g := GameInit()
+	g := GameInit()
 	ebiten.SetWindowSize(g.x, g.x)
 	ebiten.SetWindowTitle("Grim")
-
+  ebiten.SetFullscreen(true)
 	if err := ebiten.RunGame(&g); err != nil {
 		log.Fatal(err)
 	}
