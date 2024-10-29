@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -12,12 +13,11 @@ const (
 )
 
 var (
-	px     int                                   = 0
-	py     int                                   = 0
-	speed  int                                   = 10
+	px     int                                    = 0
+	py     int                                    = 0
+	speed  int                                    = 10
 	matrix [y/blocksize + 1][x/blocksize + 1]Node // 18, 32
 )
-
 
 type Game struct {
 	x int
@@ -42,7 +42,7 @@ func GameInit() Game {
 		p: Player{
 			x:   px,
 			y:   py,
-			img: ebiten.NewImage(blocksize,blocksize),
+			img: ebiten.NewImage(blocksize, blocksize),
 			op:  &ebiten.DrawImageOptions{},
 		},
 		m: MatrixInit(),

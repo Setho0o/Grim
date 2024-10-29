@@ -13,8 +13,8 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.s = screen
-  g.MapEditor()  
-  g.UtilScreen()
+	g.MapEditor()
+	g.UtilScreen()
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -25,7 +25,7 @@ func main() {
 	g := GameInit()
 	ebiten.SetWindowSize(g.x, g.x)
 	ebiten.SetWindowTitle("Grim")
-  ebiten.SetFullscreen(true)
+	ebiten.SetFullscreen(true)
 	if err := ebiten.RunGame(&g); err != nil {
 		log.Fatal(err)
 	}
