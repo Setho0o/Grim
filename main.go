@@ -7,7 +7,7 @@ import (
 )
 
 func (g *Game) Update() error {
-  g.MapEditorKeys()
+	g.Keys()
 	return nil
 }
 
