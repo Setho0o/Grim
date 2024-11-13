@@ -16,15 +16,23 @@ var (
 	px     int                                    = 0
 	py     int                                    = 0
 	speed  int                                    = 10
-	matrix [y/blocksize + 1][x/blocksize + 1]Node // 18, 32
+  currentNode *Node
 )
 
+type Matrix struct {
+  blocksize int
+  x [x/blocksize]Yes
+}
+
+type Yes struct {
+  N [y/blocksize]Node 
+}
 type Game struct {
 	x int
 	y int
 	s *ebiten.Image // screen
 	p Player
-	m [y/blocksize + 1][x/blocksize + 1]Node
+	m Matrix
 }
 
 type Player struct {
@@ -69,4 +77,13 @@ func (g *Game) Keys() {
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
 		os.Exit(0)
 	}
+}
+
+func (g* Game) MapEditorKeys() {
+  if ebiten.IsKeyPressed(ebiten.KeyArrowUp) {
+  }
+	if ebiten.IsKeyPressed(ebiten.KeyArrowDown) {
+	}
+
+
 }
