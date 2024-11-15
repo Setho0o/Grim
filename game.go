@@ -7,19 +7,23 @@ import (
 )
 
 const (
-	x         int = 1920
-	y         int = 1080
+	x int = 1920
+	y int = 1080
 )
 
 var (
-	blocksize int = 15 // block size must be the same as block litmit or problems 
-  blocklimit int = 15
-	px     int                                    = 0
-	py     int                                    = 0
-	speed  int                                    = 10
-	mx int = x/blocksize + 1
-	my int = y/blocksize + 1
-  CurrentNode Node
+	blocksize   int = 15 // block size must be the same as block litmit or problems
+	blocklimit  int = 15
+	px          int = 0
+	py          int = 0
+	speed       int = 10
+	mx          int = x/blocksize + 1
+	my          int = y/blocksize + 1
+	CurrentNode Node
+	HomeNode    Node
+
+  cnode []Node
+  hnode []Node
 )
 
 type Game struct {
@@ -52,12 +56,12 @@ func GameInit() Game {
 	}
 }
 
-func MatrixInit(size int) [][]Node{
-  m  := make([][]Node, my)
-  
-  for i := range m {
-    m[i] = make([]Node, mx)
-  }
+func MatrixInit(size int) [][]Node {
+	m := make([][]Node, my)
+
+	for i := range m {
+		m[i] = make([]Node, mx)
+	}
 
 	for i, row := range m {
 		for j, _ := range row {
@@ -67,34 +71,35 @@ func MatrixInit(size int) [][]Node{
 		}
 	}
 
-  return m
+	return m
 }
-func (g *Game) NewMatrix(NewSize int) {
-  if NewSize > blocklimit {
-    size := &blocksize
 
-    NewMatrix := MatrixInit(NewSize)
-    OldMatrix := g.m 
-    if len(NewMatrix) > len(OldMatrix) {
-      for i, e := range OldMatrix {
-        for j, _ := range e {
-          if *OldMatrix[i][j].fill {
-            *NewMatrix[i][j].fill = true
-          }
-        }
-      }
-    } else {
-      for i, e := range NewMatrix {
-        for j, _ := range e {
-         if *OldMatrix[i][j].fill {
-            *NewMatrix[i][j].fill = true
-          } 
-        }
-      }
-    }
-    *size = NewSize
-    g.m = NewMatrix
-  }
+func (g *Game) NewMatrix(NewSize int) {
+	if NewSize > blocklimit {
+		size := &blocksize
+
+		NewMatrix := MatrixInit(NewSize)
+		OldMatrix := g.m
+		if len(NewMatrix) > len(OldMatrix) {
+			for i, e := range OldMatrix {
+				for j, _ := range e {
+					if *OldMatrix[i][j].fill {
+						*NewMatrix[i][j].fill = true
+					}
+				}
+			}
+		} else {
+			for i, e := range NewMatrix {
+				for j, _ := range e {
+					if *OldMatrix[i][j].fill {
+						*NewMatrix[i][j].fill = true
+					}
+				}
+			}
+		}
+		*size = NewSize
+		g.m = NewMatrix
+	}
 }
 
 func MoveTo(x, y, dx, dy int) (float64, float64) {
@@ -102,21 +107,15 @@ func MoveTo(x, y, dx, dy int) (float64, float64) {
 }
 
 func (g *Game) Keys() {
-  x, y := ebiten.Wheel()
-  g.NewMatrix(blocksize + int(x))
-  g.NewMatrix(blocksize - int(y))
-
-
+	x, y := ebiten.Wheel()
+	g.NewMatrix(blocksize + int(x))
+	g.NewMatrix(blocksize - int(y))
 
 	if ebiten.IsKeyPressed(ebiten.KeyArrowUp) {
 		g.p.op.GeoM.Translate(MoveTo(g.p.x, g.p.y, 0, -speed))
-
-
-    g.NewMatrix(blocksize + 1)
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyArrowDown) {
 		g.p.op.GeoM.Translate(MoveTo(g.p.x, g.p.y, 0, speed))
-    g.NewMatrix(blocksize - 1)
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
 		g.p.op.GeoM.Translate(MoveTo(g.p.x, g.p.y, -speed, 0))
@@ -127,6 +126,4 @@ func (g *Game) Keys() {
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
 		os.Exit(0)
 	}
-
-
 }

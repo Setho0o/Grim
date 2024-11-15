@@ -1,95 +1,76 @@
 package main
 
 import (
-	"image/color"
 	"strconv"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 )
-
-type Node struct {
-	x    int
-	y    int
-	bx   []int
-	by   []int
-	fill *bool
-  adj []Node
-}
-func (c *Node) Bounds() {
-	for x := c.x; x < c.x+blocksize; x++ {
-		c.bx = append(c.bx, x)
-	}
-	for y := c.y; y < c.y+blocksize; y++ {
-		c.by = append(c.by, y)
-	}
-}
-func (n *Node) AdjNodes() {
-}
-
-func ClosestNode(x, y int) (int, int) {
-	return x / blocksize, y / blocksize
-
-}
 
 func (g *Game) MapEditor() {
 	for i, row := range g.m {
 		for j, _ := range row {
 			n := g.m[i][j]
 			if *n.fill {
-				g.FillCell(n)
+				g.FillNode(n)
 			}
 			g.s.Set(n.x, n.y, tan)
-
-			/* tiles
-			   for i := 0; i < len(loc.bx); i++ {
-			     g.s.set(loc.bx[i], loc.y, c)
-			   }
-			   for i := 0; i < len(loc.by); i++ {
-			     g.s.set(loc.x, loc.by[i], c)
-			   }
-			*/
 		}
 	}
-  
+
 	x, y := ClosestNode(ebiten.CursorPosition())
-	cell := g.m[y][x]
-  CurrentNode = cell	
+	node := g.m[y][x]
+	CurrentNode = node
+  
+  g.LineMode()
+  g.SavedLines()
+}
 
-  g.FillCell(cell)
+func (g *Game) LineMode() {
+  if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
+    HomeNode = CurrentNode
+	}
+  
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButton2) {
+    cnode = append(cnode, CurrentNode)
+    hnode = append(hnode, HomeNode)
+    HomeNode = CurrentNode
+	}
 
+  vector.StrokeLine(g.s,float32(HomeNode.x),float32(HomeNode.y),float32(CurrentNode.x),float32(CurrentNode.y),2,tan,false)
+}
+func (g *Game) SavedLines() {
+  for i := range cnode {
+    c := cnode[i]
+    h := hnode[i]
+    vector.StrokeLine(g.s,float32(h.x),float32(h.y),float32(c.x),float32(c.y),2,tan,false)
+  }
+}
+func (g *Game) BlockMode() {
+  g.FillNode(CurrentNode)
+  
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-		*cell.fill = true
+		*CurrentNode.fill = true
 	}
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButton2) {
-		*cell.fill = false
+		*CurrentNode.fill = false
 	}
+
 }
 
 func (g *Game) UtilScreen() {
-
 	img := ebiten.NewImage(g.x/3, g.y/3)
 	op := ebiten.DrawImageOptions{}
 	op.GeoM.Translate(MoveTo(0, 0, g.x-g.x/3, 0))
 
 	img.Fill(tan)
 	g.s.DrawImage(img, &op)
-  
-  cx, cy := ebiten.CursorPosition()  
 
-  DrawText(g.s, "x - " + strconv.Itoa(x), arcadeFontSrc,20,float64(g.x-g.x/3),20)
-  DrawText(g.s, "y -" + strconv.Itoa(y), arcadeFontSrc,20,float64(g.x-g.x/3),40)
-  DrawText(g.s, "cursor - "+strconv.Itoa(cx)+" "+strconv.Itoa(cy), arcadeFontSrc,20,float64(g.x-g.x/3),60)
-  DrawText(g.s, "blocksize -"+strconv.Itoa(blocksize), arcadeFontSrc,20,float64(g.x-g.x/3),80)
-  DrawText(g.s, "current node -"+strconv.Itoa(cx/blocksize )+" "+strconv.Itoa(cy/blocksize), arcadeFontSrc,20,float64(g.x-g.x/3),100)
+	cx, cy := ebiten.CursorPosition()
 
-
-
-}
-
-func (g *Game) FillCell(n Node) {
-	for _, x := range n.bx {
-		for _, y := range n.by {
-			g.s.Set(x, y, color.White)
-		}
-	}
+	DrawText(g.s, "x - "+strconv.Itoa(x), arcadeFontSrc, 20, float64(g.x-g.x/3), 20)
+	DrawText(g.s, "y -"+strconv.Itoa(y), arcadeFontSrc, 20, float64(g.x-g.x/3), 40)
+	DrawText(g.s, "cursor - "+strconv.Itoa(cx)+" "+strconv.Itoa(cy), arcadeFontSrc, 20, float64(g.x-g.x/3), 60)
+	DrawText(g.s, "blocksize -"+strconv.Itoa(blocksize), arcadeFontSrc, 20, float64(g.x-g.x/3), 80)
+	DrawText(g.s, "current node -"+strconv.Itoa(cx/blocksize)+" "+strconv.Itoa(cy/blocksize), arcadeFontSrc, 20, float64(g.x-g.x/3), 100)
 }
