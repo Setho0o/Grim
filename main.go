@@ -7,12 +7,12 @@ import (
 )
 
 func (g *Game) Update() error {
-	g.Keys()
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.s = screen
+  g.Keys()
 	g.MapEditor()
 	g.UtilScreen()
 }
